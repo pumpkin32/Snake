@@ -18,13 +18,10 @@ def setka(x=0, y=0):                                        # Функция и�
         pygame.draw.line(surface, (0, 0, 0), (0, y), (width, y))
         y += block_size
 
-
 class snake():
     def __init__(self, x, y):                               # метод инициализатор для обьекта Snake
         self.head = [x * block_size, y * block_size]
         self.body = [[self.head[0] - block_size, self.head[1] - block_size]]
-        self.apple_x = (random.randint(0, (width // block_size - 1))) * block_size + block_size // 2
-        self.apple_y = (random.randint(0, (height // block_size - 1))) * block_size + block_size // 2
         self.top = False
         self.right = False
         self.left = False
@@ -38,7 +35,6 @@ class snake():
             self.body.pop()
             
         self.body.insert(0, list(self.head))
-
 
     def controler(self):                                     # метод задающая направление движения змеи
         for press in pygame.event.get():
@@ -89,12 +85,19 @@ class snake():
             i += 1
             if self.head[0] == segment[0] and self.head[1] == segment[1]:
                 del self.body[i:]
-    
-    def apple_move(self):                                   # метод сравнивающий положение головы по отношению яблока
-        if self.head[0] + 10 == self.apple_x and self.head[1] + 10 == self.apple_y:
+
+
+class apple():
+
+    def __init__(self):
+        self.apple_x = (random.randint(0, (width // block_size - 1))) * block_size + block_size // 2
+        self.apple_y = (random.randint(0, (height // block_size - 1))) * block_size + block_size // 2
+
+    def apple_move(self, head, body):                                   # метод сравнивающий положение головы по отношению яблока
+        if head[0] + 10 == self.apple_x and head[1] + 10 == self.apple_y:
             self.apple_x = (random.randint(0, (width // block_size - 1))) * block_size + block_size // 2
             self.apple_y = (random.randint(0, (height // block_size - 1))) * block_size + block_size // 2
-            self.body.insert(0, list(self.head))
+            body.insert(0, list(head))
     
     def apple_draw(self):                                   # метод отрисовки яблока
         pygame.draw.circle(surface, (255, 0, 0), (self.apple_x, self.apple_y), block_size // 2)        
@@ -103,6 +106,8 @@ class snake():
 
 
 Snake = snake(20, 10)                                       # создание обьекта Snake
+Apple = apple()
+
 
 while True:
 
@@ -111,8 +116,8 @@ while True:
     setka()
     Snake.draw()
     Snake.controler()
-    Snake.apple_move()
-    Snake.apple_draw()
+    Apple.apple_move(Snake.head, Snake.body)
+    Apple.apple_draw()
     Snake.move()
     Snake.collision()
     
